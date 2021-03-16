@@ -13,7 +13,7 @@ function Task(props) {
             checkedColor="#7FFF00"
           />
         </View>
-        <View>
+        <View style={styles.textbox}>
           <Text style={styles.text}>{props.todo}</Text>
         </View>
         <View>
@@ -49,6 +49,9 @@ const styles = StyleSheet.create({
   },
   XButton: {
     color: '#DC143C',
+  },
+  textbox: {
+    flexShrink: 1,
   },
 });
 
