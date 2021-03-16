@@ -3,8 +3,6 @@ import {SafeAreaView, StyleSheet, View, Text, ScrollView} from 'react-native';
 import Add from './Add';
 
 function Todo() {
-  const [content, setContent] = useState(<Add />);
-
   return (
     <View style={styles.container}>
       <SafeAreaView>
@@ -13,7 +11,9 @@ function Todo() {
             <View>
               <Text style={styles.title}>Todos</Text>
             </View>
-            <View>{content}</View>
+            <View>
+              <Add />
+            </View>
           </View>
         </ScrollView>
       </SafeAreaView>

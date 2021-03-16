@@ -23,7 +23,7 @@ class Images extends React.PureComponent {
     return (
       <SafeAreaView>
         <ScrollView style={styles.container}>
-          <ImageGallery images={images} closeText="Close" />
+          <ImageGallery images={images} closeText="ASDDSDA" />
         </ScrollView>
       </SafeAreaView>
     );
