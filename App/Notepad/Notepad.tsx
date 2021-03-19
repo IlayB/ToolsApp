@@ -1,11 +1,5 @@
 import React, {useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import {StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native';
 
 import TextField from './TextField';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -24,9 +18,9 @@ function Notepad() {
         style={styles.button}
         onPress={() => setShowContent(!showContent)}>
         {showContent ? (
-          <Icon name="list" size={30} color="#01a699" />
+          <Icon name="list" size={30} color="#464420" />
         ) : (
-          <Icon name="plus" size={30} color="#01a699" />
+          <Icon name="plus" size={30} color="#464420" />
         )}
       </TouchableOpacity>
     </View>
@@ -34,8 +28,8 @@ function Notepad() {
 }
 const styles = StyleSheet.create({
   button: {
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.2)',
+    borderWidth: 3,
+    borderColor: '#d7d4a7',
     alignItems: 'center',
     justifyContent: 'center',
     width: 70,
@@ -43,7 +37,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 10,
     height: 70,
-    backgroundColor: '#FFF8DC',
+    backgroundColor: '#d0cc95',
     borderRadius: 100,
     alignSelf: 'flex-end',
   },

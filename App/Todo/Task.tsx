@@ -29,8 +29,8 @@ function Task(props) {
 
       <View
         style={{
-          borderBottomColor: 'white',
-          borderBottomWidth: 1,
+          borderBottomColor: '#00cccc',
+          borderBottomWidth: 2,
         }}
       />
       <Text>{'\n'}</Text>

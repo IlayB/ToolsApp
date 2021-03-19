@@ -1,6 +1,18 @@
-import React, {useState} from 'react';
-import {StyleSheet, View, Text, TextInput, Button} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import Task from './Task';
+
+import {Dimensions} from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+var width = Dimensions.get('window').width; //full width
 
 function Add() {
   const [inputValue, setInputValue] = useState('');
@@ -15,13 +27,52 @@ function Add() {
   //   add a new todo to the already existing array of todos with the value from inputValue
   function addTodo() {
     if (inputValue.trim() !== '') {
-      console.log(inputValue.length);
       setTodos([...todos, {todo: inputValue, completed: false}]);
       setInputValue('');
     } else {
       alert('Task must be filled out');
     }
   }
+
+  // ON SCREEN LOAD read values an write them inside "todos"
+  useEffect(() => {
+    const values = async () => {
+      try {
+        //GET DATA
+        let jsonValue = await AsyncStorage.getItem('@Todo_Data');
+        let Value = JSON.parse(jsonValue);
+        if (Value) {
+          setTodos(Value);
+        }
+        // console.log('Datele luate');
+        // console.log(Value);
+        // console.log('.................');
+        //SET DATA
+        const TodosJson = JSON.stringify(Value);
+        await AsyncStorage.setItem('@Todo_Data', TodosJson);
+        // console.log('Datele injectate');
+        // console.log(TodosJson);
+        // console.log('.................');
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    values();
+  }, []);
+
+  //Function for inserting new values into database
+  const rewriteDB = async () => {
+    const TodosJson = JSON.stringify(todos);
+    await AsyncStorage.setItem('@Todo_Data', TodosJson);
+    // console.log('Datele noi inscrise');
+    // console.log(TodosJson);
+    // console.log('.................');
+  };
+
+  //when the todos change - sync with database
+  useEffect(() => {
+    rewriteDB();
+  }, [todos]);
 
   //   remove a todo based on the name we receive as argument
   function removeTodo(todoName) {
@@ -49,12 +100,8 @@ function Add() {
     return setFilteredTodos(todos.filter((item) => item.completed));
   }
 
-  const completedTodos = todos.filter((item) => item.completed).length;
-  const activeTodos = todos.filter((item) => !item.completed).length;
-  const allTodos = todos.filter((item) => !item.completed).length;
-
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.input}>
         <TextInput
           style={{
@@ -68,13 +115,15 @@ function Add() {
           onChangeText={(text) => setInputValue(text)}
           value={inputValue}
         />
-        <Button title="ADD" onPress={addTodo} />
+        <TouchableOpacity onPress={addTodo} style={styles.buttons}>
+          <Text style={styles.buttonsText}>ADD</Text>
+        </TouchableOpacity>
       </View>
       <Text>{'\n'}</Text>
       <View>
         {filteredTodos.length > 0
           ? //   show filtered todos if a button is pressed
-            filteredTodos.map((item, key) => (
+            filteredTodos.map((item) => (
               <Task
                 todo={item.todo}
                 completed={item.completed}
@@ -95,14 +144,26 @@ function Add() {
             ))}
       </View>
       <View style={styles.bottomNav}>
-        <Button title="All Todos " onPress={showAllTodos} />
-        <Button title="Active" onPress={showNotCompletedTodos} />
-        <Button title="Completed" onPress={showCompletedTodos} />
+        <TouchableOpacity onPress={showAllTodos} style={styles.buttons}>
+          <Text style={styles.buttonsText}>Todos</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={showNotCompletedTodos}
+          style={styles.buttons}>
+          <Text style={styles.buttonsText}>Active</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={showCompletedTodos} style={styles.buttons}>
+          <Text style={styles.buttonsText}>Completed</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 const styles = StyleSheet.create({
+  container: {
+    width: width,
+    alignSelf: 'center',
+  },
   bottomNav: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -112,6 +173,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buttons: {
+    backgroundColor: '#00b3b3',
+    height: 55,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 20,
+    borderWidth: 3,
+    borderColor: '#00cccc',
+  },
+  buttonsText: {
+    padding: 10,
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

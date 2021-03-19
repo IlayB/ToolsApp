@@ -1,32 +1,75 @@
-import React, {useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  Button,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, View, Text, TextInput, Button} from 'react-native';
 
 import NoteList from './NoteList';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function TextField(props) {
   const [titleValue, setTitleValue] = useState('');
   const [inputValue, setInputValue] = useState('');
 
   const [notes, setNotes] = useState([
-    // {title: 'Fignea', input: 'Cacaiata'},
-    // {title: 'Third Title', input: 'Third Input'},
+    // {title: 'Fignea', input: 'Cacaiata', id: 90},
+    // {title: 'Third Title', input: 'Third Input', id: 50},
   ]);
 
-  function addNote() {
+  const addNote = async () => {
     if (titleValue.trim() !== '' && inputValue.trim() !== '') {
-      setNotes([...notes, {title: titleValue, input: inputValue}]);
+      setNotes([
+        ...notes,
+        {title: titleValue, input: inputValue, id: Math.random()},
+      ]);
       setInputValue('');
       setTitleValue('');
     } else {
       alert('All the fields must be filed.');
     }
+  };
+
+  // ON SCREEN LOAD read values an write them inside "notes"
+  useEffect(() => {
+    const values = async () => {
+      try {
+        //GET DATA
+        let jsonValue = await AsyncStorage.getItem('@Notes_Data');
+        let Value = JSON.parse(jsonValue);
+        if (Value) {
+          setNotes(Value);
+        }
+        // console.log('Datele luate');
+        // console.log(Value);
+        // console.log('.................');
+        //SET DATA
+        const NotesJson = JSON.stringify(Value);
+        await AsyncStorage.setItem('@Notes_Data', NotesJson);
+        // console.log('Datele injectate');
+        // console.log(NotesJson);
+        // console.log('.................');
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    values();
+  }, []);
+
+  //Function for inserting new values into database
+  const rewriteDB = async () => {
+    const NotesJson = JSON.stringify(notes);
+    await AsyncStorage.setItem('@Notes_Data', NotesJson);
+    // console.log('Datele noi inscrise');
+    // console.log(NotesJson);
+    // console.log('.................');
+  };
+
+  //when the notes change - sync with database
+  useEffect(() => {
+    rewriteDB();
+  }, [notes]);
+
+  //Delete values
+  function removeTodo(noteName) {
+    setNotes(notes.filter((item) => item.id !== noteName));
   }
 
   if (props.show) {
@@ -86,7 +129,12 @@ function TextField(props) {
     return (
       <View style={styles.container}>
         {notes.map((item) => (
-          <NoteList title={item.title} input={item.input} key={Math.random()} />
+          <NoteList
+            title={item.title}
+            input={item.input}
+            key={Math.random()}
+            remove={() => removeTodo(item.id)}
+          />
         ))}
       </View>
     );
@@ -96,7 +144,6 @@ function TextField(props) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#BDB76B',
-    // justifyContent: 'center',
   },
   input: {
     flexDirection: 'row',
@@ -108,10 +155,11 @@ const styles = StyleSheet.create({
     color: 'white',
     padding: 15,
     alignSelf: 'center',
-    fontSize: 50,
+    fontSize: 45,
     textDecorationLine: 'underline',
     fontWeight: 'bold',
-    fontStyle: 'italic',
+    // fontStyle: 'italic',
+    textShadowColor: 'red',
   },
   head: {
     color: 'white',

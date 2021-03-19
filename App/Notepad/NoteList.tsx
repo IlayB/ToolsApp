@@ -1,5 +1,7 @@
 import React from 'react';
-import {StyleSheet, View, Text, ScrollView} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 function NoteList(props) {
   return (
@@ -8,7 +10,19 @@ function NoteList(props) {
         <View style={styles.container}>
           <Text style={styles.title}>{props.title}</Text>
         </View>
-        <Text style={styles.input}>{props.input}</Text>
+        <View>
+          <Text style={styles.input}>{props.input}</Text>
+        </View>
+        <View style={styles.box2}>
+          <TouchableOpacity onPress={props.remove}>
+            <Icon
+              name="trash"
+              size={20}
+              color="#A52A2A"
+              style={{paddingRight: 10, paddingBottom: 10}}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -20,11 +34,12 @@ const styles = StyleSheet.create({
   },
   box: {
     borderWidth: 2,
-    borderColor: 'white',
+    borderColor: '#d7d4a7',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
+    backgroundColor: '#c8c384',
   },
   container: {
     flexDirection: 'row',
@@ -32,14 +47,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
-    color: 'white',
+    color: '#121108',
     fontSize: 20,
     textDecorationLine: 'underline',
   },
   input: {
-    color: 'white',
+    color: '#121108',
     fontSize: 15,
     padding: 10,
+  },
+  insideBox: {
+    backgroundColor: 'blue',
+  },
+  box2: {
+    alignItems: 'flex-end',
   },
 });
 
