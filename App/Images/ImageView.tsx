@@ -8,14 +8,68 @@ import {
   Modal,
   TouchableOpacity,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 
 import FastImage from 'react-native-fast-image';
+
+import {
+  Placeholder,
+  PlaceholderMedia,
+  PlaceholderLine,
+  Fade,
+  ShineOverlay,
+} from 'rn-placeholder';
 
 const win = Dimensions.get('window');
 
 export default function ImageView(props) {
   const [modalVisible, setModalVisible] = useState(false);
+
+  if (props.placeholder) {
+    return (
+      // <View style={styles.container}>
+      <Placeholder Animation={Fade}>
+        <View style={styles.container}>
+          <PlaceholderLine
+            width={90}
+            style={{
+              marginTop: 10,
+              marginBottom: 0,
+              backgroundColor: '#c2adeb',
+            }}
+          />
+          <PlaceholderMedia
+            style={{
+              height: 100,
+              width: '100%',
+              borderRadius: 20,
+              margin: 5,
+              backgroundColor: '#c2adeb',
+            }}
+          />
+          <PlaceholderLine width={50} style={{backgroundColor: '#c2adeb'}} />
+        </View>
+      </Placeholder>
+
+      // {/* <ActivityIndicator
+      //     size="large"
+      //     color="#855cd6"
+      //     style={{
+      //       width: '100%',
+      //       height: 100,
+      //       alignSelf: 'center',
+      //     }}
+      //   /> */}
+      // {/* <Placeholder Animation={ShineOverlay}>
+      //     <PlaceholderLine width={100} height={100} />
+      //   </Placeholder>
+      //   <Placeholder Animation={ShineOverlay}>
+      //     <PlaceholderLine width={50} />
+      //   </Placeholder> */}
+      // </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -64,6 +118,9 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    // backgroundColor: 'red',
+    flexDirection: 'column',
+    paddingHorizontal: 5,
   },
   boxTitle: {
     padding: 3,

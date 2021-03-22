@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, FlatList} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  SafeAreaView,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 
 import {Dimensions} from 'react-native';
 
@@ -7,6 +15,10 @@ import ImageView from './ImageView';
 
 var width = Dimensions.get('window').width;
 const window = Dimensions.get('window');
+
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
 
 //DISABLE WARNINGS ON SCREEN
 console.disableYellowBox = true;
@@ -18,80 +30,109 @@ function Images() {
 
   const [error, setError] = useState(false);
 
+  //10 placeholders
+  const [placeholder, setPlaceholder] = useState([
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+    {},
+  ]);
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  function onRefresh() {
+    setRefreshing(true);
+
+    checkConnection();
+
+    wait(1000).then(() => setRefreshing(false));
+  }
+
   useEffect(() => {
+    checkConnection();
+  }, []);
+
+  function checkConnection() {
     try {
       fetch('https://api.imgflip.com/get_memes')
         .then((response) => response.json())
-        .then((json) => setDatabase(json))
+        .then((json) => {
+          setDatabase(json);
+          setError(false);
+        })
         .catch(() => setError(true))
         .catch((error) => console.error(error))
         .finally(() => setLoading(false));
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }
 
-  if (error) {
+  function placeholderpage() {
     return (
-      <View style={styles.container}>
-        <Text style={{fontSize: 18, color: 'red', fontWeight: 'bold'}}>
-          <Text>NO DATA</Text>
-        </Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
+          <View style={styles.container}>
+            <FlatList
+              numColumns={2}
+              data={placeholder}
+              renderItem={() => (
+                <View style={styles.box}>
+                  <ImageView url={''} id={''} name={''} placeholder={true} />
+                </View>
+              )}
+            />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 
-  return (
-    <View style={styles.container}>
-      {isLoading ? (
-        <Text>Loading...</Text>
-      ) : (
-        <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text style={styles.toptitle}>Memes:</Text>
-          <FlatList
-            numColumns={2}
-            data={database.data.memes}
-            keyExtractor={({id}, index) => id}
-            renderItem={({item, index}) => (
-              <View style={styles.box}>
-                <ImageView url={item.url} id={item.id} name={item.name} />
-              </View>
-            )}
-          />
-        </View>
-      )}
-    </View>
-  );
+  if (error) {
+    return placeholderpage();
+  }
 
-  // MEME GENERATOR
-  /////////////////////////////////////////////////////////
-  // CAMERA ROLL VIEW
-  // <CameraRollGallery
-  //Back button
-  // enableModal
-  // backgroundColor="#a385e0"
-  // imagesPerRow={parseInt('2')}
-  // imageContainerStyle={{
-  //   borderTopLeftRadius: 20,
-  //   borderTopRightRadius: 20,
-  //   borderBottomLeftRadius: 20,
-  //   borderBottomRightRadius: 20,
-  // }}
-  // imageMargin={parseInt('0')}
-  // containerWidth={width}
-  // enableCameraRoll={false}
-  //   onGetData={(resolve) => {
-  //     resolve({
-  //       // assets: database.data.memes.map((item) => ({URL: item.url})),
-  //       assets: test.data.memes.map((item) => ({URL: item.url})),
-  //     });
-  //   }}
-  // />
-  ///////////////////////////////////////////////////////
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+        <View style={styles.container}>
+          {isLoading ? (
+            placeholderpage()
+          ) : (
+            <View
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={styles.toptitle}>Memes:</Text>
+              <FlatList
+                numColumns={2}
+                data={database.data.memes}
+                keyExtractor={({id}, index) => id}
+                renderItem={({item, index}) => (
+                  <View style={styles.box}>
+                    <ImageView url={item.url} id={item.id} name={item.name} />
+                  </View>
+                )}
+              />
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 const styles = StyleSheet.create({
   container: {
