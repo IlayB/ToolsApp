@@ -51,23 +51,6 @@ export default function ImageView(props) {
           <PlaceholderLine width={50} style={{backgroundColor: '#c2adeb'}} />
         </View>
       </Placeholder>
-
-      // {/* <ActivityIndicator
-      //     size="large"
-      //     color="#855cd6"
-      //     style={{
-      //       width: '100%',
-      //       height: 100,
-      //       alignSelf: 'center',
-      //     }}
-      //   /> */}
-      // {/* <Placeholder Animation={ShineOverlay}>
-      //     <PlaceholderLine width={100} height={100} />
-      //   </Placeholder>
-      //   <Placeholder Animation={ShineOverlay}>
-      //     <PlaceholderLine width={50} />
-      //   </Placeholder> */}
-      // </View>
     );
   }
 

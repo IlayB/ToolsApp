@@ -7,11 +7,17 @@ import {
   SafeAreaView,
   ScrollView,
   RefreshControl,
+  ActivityIndicator,
+  Modal,
+  Button,
 } from 'react-native';
 
 import {Dimensions} from 'react-native';
 
 import ImageView from './ImageView';
+
+import FlashMessage from 'react-native-flash-message';
+import {showMessage, hideMessage} from 'react-native-flash-message';
 
 var width = Dimensions.get('window').width;
 const window = Dimensions.get('window');
@@ -21,7 +27,8 @@ const wait = (timeout) => {
 };
 
 //DISABLE WARNINGS ON SCREEN
-console.disableYellowBox = true;
+import {LogBox} from 'react-native';
+LogBox.ignoreAllLogs(true);
 
 function Images() {
   const [isLoading, setLoading] = useState(true);
@@ -44,7 +51,25 @@ function Images() {
     {},
   ]);
 
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [spinner, setSpinner] = useState(
+    <View style={styles.spiner}>
+      <ActivityIndicator size={80} color="#6633cc" />
+    </View>,
+  );
+
+  function beginCountdown() {
+    const interval = setTimeout(() => {
+      // console.log('This will run only once after 5 seconds');
+      setSpinner(<FlashMessage position="bottom" icon="warning" />);
+      showMessage({
+        message: 'No Connection',
+        backgroundColor: '#855cd6',
+        duration: 8000,
+      });
+    }, 5000);
+  }
 
   function onRefresh() {
     setRefreshing(true);
@@ -56,6 +81,12 @@ function Images() {
 
   useEffect(() => {
     checkConnection();
+    beginCountdown();
+    setSpinner(
+      <View style={styles.spiner}>
+        <ActivityIndicator size={80} color="#6633cc" />
+      </View>,
+    );
   }, []);
 
   function checkConnection() {
@@ -73,7 +104,6 @@ function Images() {
       console.log(e);
     }
   }
-
   function placeholderpage() {
     return (
       <SafeAreaView style={styles.container}>
@@ -93,6 +123,7 @@ function Images() {
             />
           </View>
         </ScrollView>
+        {spinner}
       </SafeAreaView>
     );
   }
@@ -163,6 +194,44 @@ const styles = StyleSheet.create({
   },
   boxInfo: {
     fontSize: 10,
+  },
+  spiner: {
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  spinerbox: {
+    backgroundColor: 'red',
+    position: 'absolute',
+    bottom: '10%',
+    flex: 1,
+    alignItems: 'center',
+  },
+  noconnectiontext: {
+    position: 'absolute',
+    paddingBottom: 500,
+    fontSize: 20,
+    color: 'red',
+    fontWeight: 'bold',
+    paddingTop: '70%',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 10,
+  },
+  noconnection: {
+    backgroundColor: 'red',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 export default Images;
