@@ -8,8 +8,6 @@ import {
   ScrollView,
   RefreshControl,
   ActivityIndicator,
-  Modal,
-  Button,
 } from 'react-native';
 
 import {Dimensions} from 'react-native';

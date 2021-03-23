@@ -4,11 +4,9 @@ import {
   Text,
   View,
   Button,
-  Image,
   Modal,
   TouchableOpacity,
   Dimensions,
-  ActivityIndicator,
 } from 'react-native';
 
 import FastImage from 'react-native-fast-image';
@@ -28,7 +26,6 @@ export default function ImageView(props) {
 
   if (props.placeholder) {
     return (
-      // <View style={styles.container}>
       <Placeholder Animation={Fade}>
         <View style={styles.container}>
           <PlaceholderLine
@@ -101,7 +98,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: 'red',
     flexDirection: 'column',
     paddingHorizontal: 5,
   },

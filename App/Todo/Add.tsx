@@ -47,6 +47,7 @@ function Add() {
         // console.log('Datele luate');
         // console.log(Value);
         // console.log('.................');
+
         //SET DATA
         const TodosJson = JSON.stringify(Value);
         await AsyncStorage.setItem('@Todo_Data', TodosJson);
